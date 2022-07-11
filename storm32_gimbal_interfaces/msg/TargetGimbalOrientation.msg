@@ -1,0 +1,3 @@
+GimbalOrientation orientation
+bool unlimited
+bool use_quaternion

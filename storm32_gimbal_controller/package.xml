@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>storm32_gimbal_controller</name>
+  <version>0.0.1</version>
+  <description>ROS2 SToRM32-Gimbal-Controller.</description>
+  <maintainer email="fabian.domberg@student.uni-luebeck.de">Fabian Domberg</maintainer>
+  <license>GNU General Public License v2.0</license>
+
+  <depend>diagnostic_updater</depend>
+  <depend>geometry_msgs</depend>
+  <depend>std_msgs</depend>
+  <depend>std_srvs</depend>
+  <depend>tf_transformations</depend>
+
+  <test_depend>ament_copyright</test_depend>
+  <test_depend>ament_flake8</test_depend>
+  <test_depend>ament_pep257</test_depend>
+  <test_depend>python3-pytest</test_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>

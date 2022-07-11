@@ -23,42 +23,37 @@ def _BV(b):
 
 # Exception Definitions
 class ACKChecksumError(Exception):
-
     def __init__(self, crc_cal, crc_rec):
         self.crc_cal = crc_cal
         self.crc_rec = crc_rec
 
     def __str__(self):
         return "CRC calculated: {0:s}, CRC received: {1:s}".format(
-            self.crc_cal, self.crc_rec)
+            self.crc_cal, self.crc_rec
+        )
 
 
 class ACKFailError(Exception):
-
     def __str__(self):
         return "Received ACK but action failed!"
 
 
 class ACKAccessDeniedError(Exception):
-
     def __str__(self):
         return "Received ACK but access denied!"
 
 
 class ACKNotSupported(Exception):
-
     def __str__(self):
         return "Received ACK but action not supported!"
 
 
 class ACKTimeout(Exception):
-
     def __str__(self):
         return "Received ACK but action timed out!"
 
 
 class ACKPayloadLen(Exception):
-
     def __str__(self):
         return "Received ACK but payload length is wrong!"
 
@@ -70,9 +65,9 @@ class Storm32(object):
     _MSG_HEADER_OUT = 0xFA
     _CMD_GET_VERSION = 0x01
     _CMD_GET_VR_STR = 0x02
-    _CMD_GET_PARAM = 0X03
-    _CMD_SET_PARAM = 0X04
-    _CMD_GET_DATA = 0X05
+    _CMD_GET_PARAM = 0x03
+    _CMD_SET_PARAM = 0x04
+    _CMD_GET_DATA = 0x05
     _CMD_GET_DATAFIELDS = 0x06
     _CMD_SET_PITCH = 0x0A
     _CMD_SET_ROLL = 0x0B
@@ -111,7 +106,7 @@ class Storm32(object):
         4: "Startup MotorDir",
         5: "Startup Relevel",
         6: "Normal",
-        7: "Standby"
+        7: "Standby",
     }
 
     _STATUS2_STR = {
@@ -125,7 +120,7 @@ class Storm32(object):
         _BV(15): "Pan Yaw",
         _BV(3): "Motor Pitch Active",
         _BV(4): "Motor Roll Active",
-        _BV(5): "Motor Yaw Active"
+        _BV(5): "Motor Yaw Active",
     }
 
     _STATUS_STR = {
@@ -144,7 +139,7 @@ class Storm32(object):
         _BV(4): "Bat Voltage Low",
         _BV(5): "IMU OK",
         _BV(6): "IMU2 OK",
-        _BV(7): "MAG OK"
+        _BV(7): "MAG OK",
     }
 
     _CAPABILITIES_STR = {
@@ -222,14 +217,14 @@ class Storm32(object):
             for i in range(0, len(self.buff) - 3):
 
                 # if header found and command is right, or command is ACK
-                if ord(self.buff[i]) == self._MSG_HEADER_IN and (
-                    (ord(self.buff[i + 2]) == cmd or
-                     (ord(self.buff[i + 2]) == self._CMD_ACK))):
+                if self.buff[i] == self._MSG_HEADER_IN and (
+                    (self.buff[i + 2] == cmd or (self.buff[i + 2] == self._CMD_ACK))
+                ):
 
                     # Check if all bytes of the message is here
-                    end_of_msg = i + ord(self.buff[i + 1]) + 5
+                    end_of_msg = i + self.buff[i + 1] + 5
                     if end_of_msg <= len(self.buff):
-                        msg = [ord(i) for i in self.buff[i:end_of_msg]]
+                        msg = [i for i in self.buff[i:end_of_msg]]
 
                         # TODO: Add CRC calculation.
 
@@ -273,7 +268,7 @@ class Storm32(object):
         """
 
         a = list(struct.pack("!f", value))
-        return list(map(ord, reversed(a)))
+        return list(reversed(a))
 
     def _int_to_bytes(self, value):
         """Convert a signed or unsigned 16-bit "int" into a little-endian "int"
@@ -338,11 +333,11 @@ class Storm32(object):
         """
         with self.lock:
             self.serial.flush()
-            self.serial.write("xx")
+            self.serial.write("xx".encode("utf-8"))
 
             # Wait a bit to make sure the response is in
             sleep(0.1)
-            s = self.serial.read()
+            s = self.serial.read().decode("utf-8")
         if s == "o":
             return True
         return False
@@ -371,7 +366,7 @@ class Storm32(object):
         return msg
 
     def get_time(self):
-        """ Get time data from gimbal controller.n
+        """Get time data from gimbal controller.n
 
         returns: List of 2 "int" in [systicks, cycle_time], empty list on
         timeout.
@@ -440,7 +435,7 @@ class Storm32(object):
                 angles = [
                     self._bytes_to_int(data[4], data[5]) / 100.0,
                     self._bytes_to_int(data[6], data[7]) / 100.0,
-                    self._bytes_to_int(data[8], data[9]) / 100.0
+                    self._bytes_to_int(data[8], data[9]) / 100.0,
                 ]
                 return angles
         return []
@@ -457,7 +452,7 @@ class Storm32(object):
                 angles = [
                     self._bytes_to_int(data[4], data[5]) / 100.0,
                     self._bytes_to_int(data[6], data[7]) / 100.0,
-                    self._bytes_to_int(data[8], data[9]) / 100.0
+                    self._bytes_to_int(data[8], data[9]) / 100.0,
                 ]
                 return angles
         return []
